@@ -2,8 +2,6 @@
 
 #import <EXErrorRecovery/EXErrorRecoveryModule.h>
 
-NSString * const userDefaultsKey = @"expo.errorRecovery";
-
 @interface EXErrorRecoveryModule ()
 
 @property (nonatomic, strong) NSString *recoveryPropsToSave;
@@ -16,7 +14,7 @@ UM_EXPORT_MODULE(ExpoErrorRecovery);
 
 UM_EXPORT_METHOD_AS(setRecoveryProps,
                     setRecoveryProps:(NSString *)props
-                    resovler:(UMPromiseResolveBlock)resolve
+                    resolver:(UMPromiseResolveBlock)resolve
                     rejecter:(UMPromiseRejectBlock)reject)
 {
   _recoveryPropsToSave = props;
@@ -43,18 +41,19 @@ UM_EXPORT_METHOD_AS(saveRecoveryProps,
            };
 }
 
-- (BOOL)pushProps:(NSString *)props {
+- (BOOL)pushProps:(NSString *)props 
+{
   NSUserDefaults *preferences = [NSUserDefaults standardUserDefaults];
-  [preferences setObject:props forKey:userDefaultsKey];
+  [preferences setObject:props forKey:USER_DEFAULTS_KEY];
   return [preferences synchronize];
 }
 
 - (NSString *)popProps
 {
   NSUserDefaults *preferences = [NSUserDefaults standardUserDefaults];
-  NSString *props = [preferences objectForKey:userDefaultsKey];
+  NSString *props = [preferences objectForKey:USER_DEFAULTS_KEY];
   if (props != nil) {
-    [preferences removeObjectForKey:userDefaultsKey];
+    [preferences removeObjectForKey:USER_DEFAULTS_KEY];
     [preferences synchronize];
   }
   return props;

@@ -16,8 +16,10 @@ export default function withExpoRoot(AppRootComponent) {
             }
         }
         render() {
-            const props = this.props;
-            props.exp.errorRecovery = ErrorRecovery.errors;
+            const props = {
+                ...this.props,
+                exp: { ...this.props.exp, errorRecovery: ErrorRecovery.errors },
+            };
             if (__DEV__) {
                 return (<RootErrorBoundary>
             <AppRootComponent {...props}/>

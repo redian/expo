@@ -1,2 +1,2 @@
 import { NativeModulesProxy } from '@unimodules/core';
-export default NativeModulesProxy.ExpoErrorRecovery;
+export default NativeModulesProxy.ExpoErrorRecovery || {};

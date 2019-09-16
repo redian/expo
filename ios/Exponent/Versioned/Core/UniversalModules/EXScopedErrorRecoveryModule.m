@@ -3,8 +3,6 @@
 #if __has_include(<EXErrorRecovery/EXErrorRecoveryModule.h>)
 #import "EXScopedErrorRecoveryModule.h"
 
-extern NSString * const userDefaultsKey; // from EXErrorRecoveryModule
-
 @interface EXScopedErrorRecoveryModule ()
 
 @property (nonatomic, strong) NSString *experienceId;
@@ -24,7 +22,7 @@ extern NSString * const userDefaultsKey; // from EXErrorRecoveryModule
 - (BOOL)pushProps:(NSString *)props
 {
   NSUserDefaults *preferences = [NSUserDefaults standardUserDefaults];
-  NSDictionary *errorRecoveryStore = [preferences objectForKey:userDefaultsKey];
+  NSDictionary *errorRecoveryStore = [preferences objectForKey:USER_DEFAULTS_KEY];
   if (errorRecoveryStore == nil) {
     return [EXScopedErrorRecoveryModule updateUserDefaults:preferences
                                         withErrorRecoveryStore:@{ _experienceId: props }];
@@ -39,7 +37,7 @@ extern NSString * const userDefaultsKey; // from EXErrorRecoveryModule
 - (NSString *)popProps
 {
   NSUserDefaults *preferences = [NSUserDefaults standardUserDefaults];
-  NSDictionary *errorRecoveryStore = [preferences objectForKey:userDefaultsKey];
+  NSDictionary *errorRecoveryStore = [preferences objectForKey:USER_DEFAULTS_KEY];
   if (errorRecoveryStore != nil) {
     NSString *props = [errorRecoveryStore objectForKey:_experienceId];
     if (props != nil) {
@@ -57,7 +55,7 @@ extern NSString * const userDefaultsKey; // from EXErrorRecoveryModule
 + (BOOL)updateUserDefaults:(NSUserDefaults *)preferences
     withErrorRecoveryStore:(NSDictionary *)newStore
 {
-  [preferences setObject:newStore forKey:userDefaultsKey];
+  [preferences setObject:newStore forKey:USER_DEFAULTS_KEY];
   return [preferences synchronize];
 }
 
