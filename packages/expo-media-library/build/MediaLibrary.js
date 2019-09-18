@@ -83,6 +83,12 @@ export async function createAssetAsync(localUri) {
     }
     return asset;
 }
+export async function saveToAssetsAsync(localUri) {
+    if (!MediaLibrary.saveToAssetsAsync) {
+        throw new UnavailabilityError('MediaLibrary', 'saveToAssetsAsync');
+    }
+    return await MediaLibrary.saveToAssetsAsync(localUri);
+}
 export async function addAssetsToAlbumAsync(assets, album, copy = true) {
     if (!MediaLibrary.addAssetsToAlbumAsync) {
         throw new UnavailabilityError('MediaLibrary', 'addAssetsToAlbumAsync');
