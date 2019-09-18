@@ -1,3 +1,4 @@
+import * as ErrorRecovery from 'expo-error-recovery';
 import * as Font from 'expo-font';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
@@ -5,7 +6,6 @@ import { StyleSheet } from 'react-native';
 import Notifications from '../Notifications/Notifications';
 import RootErrorBoundary from './RootErrorBoundary';
 import { InitialProps } from './withExpoRoot.types';
-import * as ErrorRecovery from 'expo-error-recovery';
 
 export default function withExpoRoot<P extends InitialProps>(
   AppRootComponent: React.ComponentType<P>
@@ -24,7 +24,7 @@ export default function withExpoRoot<P extends InitialProps>(
     render() {
       const props = {
         ...this.props,
-        exp: { ...this.props.exp, errorRecovery: ErrorRecovery.errors },
+        exp: { ...this.props.exp, errorRecovery: ErrorRecovery.recoveredProps },
       };
       if (__DEV__) {
         return (

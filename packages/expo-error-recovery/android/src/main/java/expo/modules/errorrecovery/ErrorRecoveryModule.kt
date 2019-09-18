@@ -8,44 +8,38 @@ import org.unimodules.core.ModuleRegistry
 import org.unimodules.core.Promise
 import org.unimodules.core.interfaces.ExpoMethod
 
-private const val ERROR_STORE = "expo.modules.errorrecovery.store"
+private const val RECOVERY_STORE = "expo.modules.errorrecovery.store"
+private const val RECOVERY_STORE_KEY = "recoveredProps"
 
 open class ErrorRecoveryModule(context: Context) : ExportedModule(context) {
   protected lateinit var mSharedPreferences: SharedPreferences
-  private var propsReadyToSave: String? = null
 
   override fun getName(): String = "ExpoErrorRecovery"
 
   override fun onCreate(moduleRegistry: ModuleRegistry) {
-    mSharedPreferences = context.applicationContext.getSharedPreferences(ERROR_STORE, Context.MODE_PRIVATE)
+    mSharedPreferences = context.applicationContext.getSharedPreferences(RECOVERY_STORE, Context.MODE_PRIVATE)
   }
 
   @ExpoMethod
-  fun setRecoveryProps(props: String, promise: Promise) {
-    propsReadyToSave = props
-    promise.resolve(null)
-  }
-
-  @ExpoMethod
-  fun saveRecoveryProps(promise: Promise) {
-    propsReadyToSave?.let {
-      pushProps(it)
+  fun saveRecoveryProps(props: String?, promise: Promise) {
+    props?.let {
+      setRecoveryProps(it)
     }
     promise.resolve(null)
   }
 
   override fun getConstants(): Map<String, Any?> {
-    return mapOf("errors" to popProps())
+    return mapOf("recoveredProps" to consumeRecoveryProps())
   }
 
 
-  protected open fun pushProps(props: String) {
-    mSharedPreferences.edit().putString("errorRecovery", props).apply()
+  protected open fun setRecoveryProps(props: String) {
+    mSharedPreferences.edit().putString(RECOVERY_STORE_KEY, props).apply()
   }
 
-  protected open fun popProps(): String? {
-    return mSharedPreferences.getString("errorRecovery", null)?.let {
-      mSharedPreferences.edit().remove("errorRecovery").apply()
+  protected open fun consumeRecoveryProps(): String? {
+    return mSharedPreferences.getString(RECOVERY_STORE_KEY, null)?.let {
+      mSharedPreferences.edit().remove(RECOVERY_STORE_KEY).apply()
       it
     }
   }

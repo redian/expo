@@ -7,8 +7,8 @@ static NSString * const USER_DEFAULTS_KEY = @"expo.errorRecovery";
 
 @interface EXErrorRecoveryModule : UMExportedModule
 
-- (BOOL)pushProps:(NSString *)props;
+- (BOOL)setRecoveryProps:(NSString *)props;
 
-- (NSString *)popProps;
+- (NSString *)consumeRecoveryProps;
 
 @end

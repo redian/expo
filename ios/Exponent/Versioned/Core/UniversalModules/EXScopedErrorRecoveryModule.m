@@ -19,11 +19,11 @@
   return self;
 }
 
-- (BOOL)pushProps:(NSString *)props
+- (BOOL)setRecoveryProps:(NSString *)props
 {
   NSUserDefaults *preferences = [NSUserDefaults standardUserDefaults];
   NSDictionary *errorRecoveryStore = [preferences objectForKey:USER_DEFAULTS_KEY];
-  if (errorRecoveryStore == nil) {
+  if (!errorRecoveryStore) {
     return [EXScopedErrorRecoveryModule updateUserDefaults:preferences
                                         withErrorRecoveryStore:@{ _experienceId: props }];
   } else {
@@ -34,20 +34,20 @@
   }
 }
 
-- (NSString *)popProps
+- (NSString *)consumeRecoveryProps
 {
   NSUserDefaults *preferences = [NSUserDefaults standardUserDefaults];
   NSDictionary *errorRecoveryStore = [preferences objectForKey:USER_DEFAULTS_KEY];
-  if (errorRecoveryStore != nil) {
+  if (errorRecoveryStore) {
     NSString *props = [errorRecoveryStore objectForKey:_experienceId];
-    if (props != nil) {
+    if (props) {
       NSMutableDictionary *storeWithRemovedProps = [errorRecoveryStore mutableCopy];
       [storeWithRemovedProps removeObjectForKey:_experienceId];
       
       [EXScopedErrorRecoveryModule updateUserDefaults:preferences
                                    withErrorRecoveryStore:storeWithRemovedProps];
+      return props;
     }
-    return props;
   }
   return nil;
 }

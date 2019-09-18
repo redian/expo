@@ -1,6 +1,6 @@
-export declare const errors: {
+export declare const recoveredProps: {
     [key: string]: any;
-} | undefined;
+} | null;
 export declare function setRecoveryProps(props: {
     [key: string]: any;
 }): void;

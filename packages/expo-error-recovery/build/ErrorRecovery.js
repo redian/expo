@@ -1,32 +1,20 @@
-import { UnavailabilityError } from '@unimodules/core';
 import ExpoErrorRecovery from './ExpoErrorRecovery';
-const globalHandlerSwapper = (() => {
-    let wasExecuted = false;
-    return function () {
-        if (!wasExecuted) {
-            wasExecuted = true;
-            const globalHandler = ErrorUtils.getGlobalHandler();
-            // ErrorUtlis came from react-native
-            // https://github.com/facebook/react-native/blob/1151c096dab17e5d9a6ac05b61aacecd4305f3db/Libraries/vendor/core/ErrorUtils.js#L25
-            ErrorUtils.setGlobalHandler(async (error, isFatal) => {
-                await ExpoErrorRecovery.saveRecoveryProps();
-                globalHandler(error, isFatal);
-            });
-        }
-    };
-})();
-export const errors = _parseNativeErrors();
+let recoveredPropsToSave = null;
+const globalHandler = ErrorUtils.getGlobalHandler();
+// ErrorUtils came from react-native
+// https://github.com/facebook/react-native/blob/1151c096dab17e5d9a6ac05b61aacecd4305f3db/Libraries/vendor/core/ErrorUtils.js#L25
+ErrorUtils.setGlobalHandler(async (error, isFatal) => {
+    await ExpoErrorRecovery.saveRecoveryProps(recoveredPropsToSave);
+    globalHandler(error, isFatal);
+});
+export const recoveredProps = _getRecoveredProps();
 export function setRecoveryProps(props) {
-    if (!ExpoErrorRecovery.setRecoveryProps) {
-        throw new UnavailabilityError('ErrorRecovery', 'setRecoveryProps');
-    }
-    ExpoErrorRecovery.setRecoveryProps(JSON.stringify(props));
-    globalHandlerSwapper();
+    recoveredPropsToSave = JSON.stringify(props);
 }
-function _parseNativeErrors() {
-    if (ExpoErrorRecovery.errors) {
-        return JSON.parse(ExpoErrorRecovery.errors);
+function _getRecoveredProps() {
+    if (ExpoErrorRecovery.recoveredProps) {
+        return JSON.parse(ExpoErrorRecovery.recoveredProps);
     }
-    return undefined;
+    return null;
 }
 //# sourceMappingURL=ErrorRecovery.js.map
